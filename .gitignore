@@ -1,0 +1,22 @@
+# Ignorar directorios de compilación y empaquetamiento
+/build/
+/dist/
+
+# Ignorar archivos específicos de NetBeans
+/nbproject/private/
+*.orig
+nbproject/
+nb-private.xml
+
+# Ignorar archivos de Java
+*.class
+*.jar
+*.war
+*.ear
+/bin/
+
+# Ignorar archivos de IDEs (en caso de usar otros)
+.idea/
+.vscode/
+.DS_Store
+/target/
