@@ -11,16 +11,19 @@ import java.sql.SQLException;
  * @author tehca
  */
 public class ConexionBD {
-    //Coloca aqui toda la conexion a la base de datos
-    public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/proyectovisual?useSSL=false&serverTimezone=UTC";
-        String user = "root";
-        String pass = "1881";
 
-        try (Connection conn = DriverManager.getConnection(url, user, pass)) {
-            System.out.println("Conexión exitosa 🎉");
+    private static final String URL = "jdbc:mysql://localhost:3306/proyectovisual";
+    private static final String USER = "root";
+    private static final String PASSWORD = "1881";
+
+    public static Connection getConnection() {
+
+        try {
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            return conn;
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage()); 
+            e.printStackTrace();
+            return null;
         }
     }
-}       
+}
