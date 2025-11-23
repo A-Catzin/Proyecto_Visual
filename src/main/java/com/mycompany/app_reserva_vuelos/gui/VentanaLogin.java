@@ -4,6 +4,8 @@
  */
 package com.mycompany.app_reserva_vuelos.gui;
 
+import com.mycompany.app_reserva_vuelos.db.ConexionBD;
+import java.sql.Connection;
 import javax.swing.JOptionPane;
 
 
@@ -166,14 +168,41 @@ public class VentanaLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String Contra = new String(jPasswordField1.getPassword());
-        if(jTextField1.getText().trim().equals("bogard")||jTextField1.getText().trim().equals("cruz")&& Contra.equals("123")|| Contra.equals(456)){
-            VentanaPrincipal ventana1 = new VentanaPrincipal();
-            ventana1.show();
-            this.dispose();
-        }else{
-            JOptionPane.showMessageDialog(null, "Usuario y/o contraseña invalida", "Error", JOptionPane.ERROR_MESSAGE);
+        String usuario = jTextField1.getText().trim();
+    String contrasena = new String(jPasswordField1.getPassword());
+
+    if (usuario.isEmpty() || contrasena.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Completa ambos campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try (Connection conn = ConexionBD.getConnection()) {
+
+        if (conn == null) {
+            JOptionPane.showMessageDialog(this, "No se pudo conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        String sql = "SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?";
+        var ps = conn.prepareStatement(sql);
+        ps.setString(1, usuario);
+        ps.setString(2, contrasena);
+
+        var rs = ps.executeQuery();
+
+        if (rs.next()) {
+            // Login exitoso
+            VentanaPrincipal ventana1 = new VentanaPrincipal();
+            ventana1.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario y/o contraseña inválidos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
