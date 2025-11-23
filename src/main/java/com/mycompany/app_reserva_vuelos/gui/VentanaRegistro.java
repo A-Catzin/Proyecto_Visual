@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.app_reserva_vuelos.gui;
+import com.mycompany.app_reserva_vuelos.db.UsuarioDAO;
 import javax.swing.JOptionPane;
 
 /**
@@ -216,6 +217,25 @@ public class VentanaRegistro extends javax.swing.JFrame {
         }
 
         // Aquí puedes agregar la lógica para guardar el usuario en base de datos
+        boolean registrado = UsuarioDAO.registrar(nombre, usuario, email, password);
+
+if (registrado) {
+    JOptionPane.showMessageDialog(this,
+            "Usuario registrado exitosamente",
+            "Registro exitoso",
+            JOptionPane.INFORMATION_MESSAGE);
+
+    VentanaLogin ventanaLogin = new VentanaLogin();
+    ventanaLogin.setVisible(true);
+    this.dispose();
+
+} else {
+    JOptionPane.showMessageDialog(this,
+            "Error al registrar usuario",
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+}
+
         JOptionPane.showMessageDialog(this, 
             "Usuario registrado exitosamente", 
             "Registro exitoso", 
