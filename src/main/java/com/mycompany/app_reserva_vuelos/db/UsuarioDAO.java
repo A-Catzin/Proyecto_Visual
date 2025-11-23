@@ -4,7 +4,6 @@
  */
 package com.mycompany.app_reserva_vuelos.db;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -17,6 +16,11 @@ public class UsuarioDAO {
         try (Connection conn = ConexionBD.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            if (conn == null) {
+                System.err.println("No se pudo obtener la conexión a la base de datos.");
+                return false;
+            }
+
             stmt.setString(1, nombre);
             stmt.setString(2, usuario);
             stmt.setString(3, email);
@@ -26,7 +30,7 @@ public class UsuarioDAO {
             return rows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error al registrar usuario: " + e.getMessage());
             return false;
         }
     }

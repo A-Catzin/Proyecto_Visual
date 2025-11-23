@@ -1,29 +1,98 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.app_reserva_vuelos.db;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-/**
- *
- * @author tehca
- */
+import java.sql.Statement;
+
 public class ConexionBD {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/proyectovisual";
-    private static final String USER = "root";
-    private static final String PASSWORD = "1881";
+    
+    private static final String URL = "jdbc:sqlite:proyectovisual.db";
 
     public static Connection getConnection() {
-
         try {
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(URL);
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = ON;");
+            }
             return conn;
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error: Driver SQLite no encontrado");
             e.printStackTrace();
             return null;
+        } catch (SQLException e) {
+            System.err.println("Error al conectar con la base de datos");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void inicializarSiNoExiste() {
+        File dbFile = new File("proyectovisual.db");
+
+        if (!dbFile.exists()) {
+            System.out.println("Base de datos no encontrada. Creando desde el script SQL...");
+            try {
+                ejecutarScriptSQL("proyectovisual.sql"); // raíz del proyecto
+                System.out.println("¡Base de datos creada exitosamente!");
+            } catch (Exception e) {
+                System.err.println("Error al crear la base de datos:");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Base de datos encontrada. Conexión lista.");
+        }
+    }
+
+    private static void ejecutarScriptSQL(String rutaArchivo) throws SQLException, IOException {
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+
+            StringBuilder sql = new StringBuilder();
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                linea = linea.trim();
+
+                // Ignorar comentarios y líneas vacías
+                if (linea.isEmpty() || linea.startsWith("--")) {
+                    continue;
+                }
+
+                sql.append(linea).append(" ");
+
+                // Ejecutar cuando encuentra un punto y coma
+                if (linea.endsWith(";")) {
+                    String sentencia = sql.toString();
+                    try {
+                        stmt.execute(sentencia);
+                    } catch (SQLException e) {
+                        System.err.println("Error ejecutando sentencia: " + sentencia);
+                        throw e;
+                    }
+                    sql.setLength(0); // limpiar buffer
+                }
+            }
+
+            System.out.println("Script SQL ejecutado correctamente.");
+        }
+    }
+
+    public static void cerrarConexion(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar la conexión:");
+                e.printStackTrace();
+            }
         }
     }
 }
