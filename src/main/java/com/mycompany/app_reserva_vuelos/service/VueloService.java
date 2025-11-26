@@ -1,13 +1,29 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.mycompany.app_reserva_vuelos.service;
+
+import com.mycompany.app_reserva_vuelos.model.Vuelo;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
  * @author tehca
  */
-public class VueloService {
-    
+
+/**
+ * Interface del service de Vuelos.
+ * Define las operaciones de negocio relacionadas con Vuelos.
+ */
+public interface VueloService { // Nombre de la interfaz sin 'I'
+
+    List<Vuelo> buscarVuelos(int idAeropuertoOrigen, int idAeropuertoDestino, LocalDate fecha);
+
+    List<VueloServiceImpl.VueloInfoUI> buscarVuelosConInfoAeropuertos(
+            int idAeropuertoOrigen, int idAeropuertoDestino, LocalDate fecha);
+
+    Vuelo obtenerVueloPorId(int idVuelo);
 }
