@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.app_reserva_vuelos.gui;
-import com.mycompany.app_reserva_vuelos.db.UsuarioDAO;
+
+import com.mycompany.app_reserva_vuelos.service.UsuarioService;
+import com.mycompany.app_reserva_vuelos.service.UsuarioServiceImpl;
 import javax.swing.JOptionPane;
 
 /**
@@ -12,15 +14,19 @@ import javax.swing.JOptionPane;
  */
 public class VentanaRegistro extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRegistro.class.getName());
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(VentanaRegistro.class.getName());
 
-    
+    // Capa de servicio: la UI solo habla con el service, no con el DAO ni con la BD
+    private final UsuarioService usuarioService;
+
     /**
      * Creates new form VentanaRegistro
      */
     public VentanaRegistro() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.usuarioService = new UsuarioServiceImpl();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -198,54 +204,59 @@ public class VentanaRegistro extends javax.swing.JFrame {
         String password = new String(txtPassword.getPassword());
         String confirmarPassword = new String(txtConfirmarPassword.getPassword());
 
-        // validar error de valores etc
-        if (nombre.isEmpty() || email.isEmpty() || usuario.isEmpty() || 
-            password.isEmpty() || confirmarPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Por favor, completa todos los campos", 
-                "Campos vacíos", 
-                JOptionPane.WARNING_MESSAGE);
+        // Validar campos vacíos
+        if (nombre.isEmpty() || email.isEmpty() || usuario.isEmpty()
+                || password.isEmpty() || confirmarPassword.isEmpty()) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Por favor, completa todos los campos",
+                    "Campos vacíos",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        // Validar contraseñas
         if (!password.equals(confirmarPassword)) {
-            JOptionPane.showMessageDialog(this, 
-                "Las contraseñas no coinciden", 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Las contraseñas no coinciden",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Aquí puedes agregar la lógica para guardar el usuario en base de datos
-        boolean registrado = UsuarioDAO.registrar(nombre, usuario, email, password);
+        // Validación sencilla de email
+        if (!email.contains("@") || !email.contains(".")) {
+            JOptionPane.showMessageDialog(this,
+                    "Ingresa un correo electrónico válido",
+                    "Email inválido",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-if (registrado) {
-    JOptionPane.showMessageDialog(this,
-            "Usuario registrado exitosamente",
-            "Registro exitoso",
-            JOptionPane.INFORMATION_MESSAGE);
+        // Llamar a la capa de servicio para registrar
+        int resultado = usuarioService.registrarUsuario(nombre, usuario, email, password);
 
-    VentanaLogin ventanaLogin = new VentanaLogin();
-    ventanaLogin.setVisible(true);
-    this.dispose();
+        if (resultado > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Usuario registrado exitosamente",
+                    "Registro exitoso",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-} else {
-    JOptionPane.showMessageDialog(this,
-            "Error al registrar usuario",
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
-}
+            VentanaLogin ventanaLogin = new VentanaLogin();
+            ventanaLogin.setVisible(true);
+            this.dispose();
 
-        JOptionPane.showMessageDialog(this, 
-            "Usuario registrado exitosamente", 
-            "Registro exitoso", 
-            JOptionPane.INFORMATION_MESSAGE);
-
-        // volver a login
-        VentanaLogin ventanaLogin = new VentanaLogin();
-        ventanaLogin.setVisible(true);
-        this.dispose();
-    
+        } else if (resultado == -2) {
+            JOptionPane.showMessageDialog(this,
+                    "El nombre de usuario ya está en uso. Elige otro.",
+                    "Usuario existente",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Error al registrar usuario",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }    
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed

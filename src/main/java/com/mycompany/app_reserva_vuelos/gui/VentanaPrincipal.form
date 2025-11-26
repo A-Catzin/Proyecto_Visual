@@ -45,7 +45,7 @@
                       <Component id="lblTitulo" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="panbusqueda" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="100" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -127,7 +127,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lblOrigen" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="lblDestino" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -197,6 +197,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Buscar Vuelos"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblOrigen">
               <Properties>
@@ -231,18 +234,28 @@
             <Component class="javax.swing.JComboBox" name="cmbOrigen">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="8">
-                    <StringItem index="0" value="Ciudad de M&#xe9;xico (MEX)"/>
-                    <StringItem index="1" value="Guadalajara (GDL)"/>
-                    <StringItem index="2" value="Monterrey (MTY)"/>
-                    <StringItem index="3" value="Canc&#xfa;n (CUN)"/>
-                    <StringItem index="4" value="Tijuana (TIJ)"/>
-                    <StringItem index="5" value="Los Cabos (SJD)"/>
-                    <StringItem index="6" value="Puerto Vallarta (PVR)"/>
-                    <StringItem index="7" value="M&#xe9;rida (MID)"/>
+                  <StringArray count="15">
+                    <StringItem index="0" value="CUN - Aeropuerto Internacional de Canc&#xfa;n"/>
+                    <StringItem index="1" value="YYZ - Aeropuerto Internacional Toronto Pearson"/>
+                    <StringItem index="2" value="GIG - Aeropuerto Internacional de Gale&#xe3;o"/>
+                    <StringItem index="3" value="SCL - Aeropuerto Internacional Arturo Merino Ben&#xed;tez"/>
+                    <StringItem index="4" value="MAD - Aeropuerto Adolfo Su&#xe1;rez Madrid-Barajas"/>
+                    <StringItem index="5" value="CDG - Aeropuerto de Par&#xed;s-Charles de Gaulle"/>
+                    <StringItem index="6" value="BER - Aeropuerto de Berl&#xed;n Brandeburgo"/>
+                    <StringItem index="7" value="FCO - Aeropuerto de Roma-Fiumicino"/>
+                    <StringItem index="8" value="NRT - Aeropuerto Internacional de Narita"/>
+                    <StringItem index="9" value="PEK - Aeropuerto Internacional de Pek&#xed;n Capital"/>
+                    <StringItem index="10" value="SYD - Aeropuerto de S&#xed;dney"/>
+                    <StringItem index="11" value="CPT - Aeropuerto Internacional de Ciudad del Cabo"/>
+                    <StringItem index="12" value="DEL - Aeropuerto Internacional Indira Gandhi"/>
+                    <StringItem index="13" value="CAI - Aeropuerto Internacional de El Cairo"/>
+                    <StringItem index="14" value="DXB - Aeropuerto Internacional de Dub&#xe1;i"/>
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbOrigenActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -250,16 +263,22 @@
             <Component class="javax.swing.JComboBox" name="cmbDestino">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="9">
-                    <StringItem index="0" value="Ciudad de M&#xe9;xico (MEX)"/>
-                    <StringItem index="1" value="Guadalajara (GDL)"/>
-                    <StringItem index="2" value="Monterrey (MTY)"/>
-                    <StringItem index="3" value="Canc&#xfa;n (CUN)"/>
-                    <StringItem index="4" value="Tijuana (TIJ)"/>
-                    <StringItem index="5" value="Los Cabos (SJD)"/>
-                    <StringItem index="6" value="Puerto Vallarta (PVR)"/>
-                    <StringItem index="7" value="M&#xe9;rida (MID)"/>
-                    <StringItem index="8" value=" "/>
+                  <StringArray count="15">
+                    <StringItem index="0" value="CUN - Aeropuerto Internacional de Canc&#xfa;n"/>
+                    <StringItem index="1" value="YYZ - Aeropuerto Internacional Toronto Pearson"/>
+                    <StringItem index="2" value="GIG - Aeropuerto Internacional de Gale&#xe3;o"/>
+                    <StringItem index="3" value="SCL - Aeropuerto Internacional Arturo Merino Ben&#xed;tez"/>
+                    <StringItem index="4" value="MAD - Aeropuerto Adolfo Su&#xe1;rez Madrid-Barajas"/>
+                    <StringItem index="5" value="CDG - Aeropuerto de Par&#xed;s-Charles de Gaulle"/>
+                    <StringItem index="6" value="BER - Aeropuerto de Berl&#xed;n Brandeburgo"/>
+                    <StringItem index="7" value="FCO - Aeropuerto de Roma-Fiumicino"/>
+                    <StringItem index="8" value="NRT - Aeropuerto Internacional de Narita"/>
+                    <StringItem index="9" value="PEK - Aeropuerto Internacional de Pek&#xed;n Capital"/>
+                    <StringItem index="10" value="SYD - Aeropuerto de S&#xed;dney"/>
+                    <StringItem index="11" value="CPT - Aeropuerto Internacional de Ciudad del Cabo"/>
+                    <StringItem index="12" value="DEL - Aeropuerto Internacional Indira Gandhi"/>
+                    <StringItem index="13" value="CAI - Aeropuerto Internacional de El Cairo"/>
+                    <StringItem index="14" value="DXB - Aeropuerto Internacional de Dub&#xe1;i"/>
                   </StringArray>
                 </Property>
               </Properties>

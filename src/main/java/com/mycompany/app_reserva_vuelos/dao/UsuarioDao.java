@@ -23,4 +23,10 @@ public interface UsuarioDao {
      * Busca un usuario por su nombre de usuario (sin validar contraseña).
      */
     Usuario obtenerPorNombreUsuario(String usuario);
+
+    /**
+     * Registra un nuevo usuario en la base de datos.
+     * Devuelve el ID generado si se insertó correctamente, o -1 si falló.
+     */
+    int registrar(Usuario usuario);
 }

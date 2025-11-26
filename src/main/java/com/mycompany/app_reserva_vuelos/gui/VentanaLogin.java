@@ -4,8 +4,8 @@
  */
 package com.mycompany.app_reserva_vuelos.gui;
 
-import com.mycompany.app_reserva_vuelos.db.ConexionBD;
-import java.sql.Connection;
+import com.mycompany.app_reserva_vuelos.service.UsuarioService;
+import com.mycompany.app_reserva_vuelos.service.UsuarioServiceImpl;
 import javax.swing.JOptionPane;
 
 
@@ -20,12 +20,15 @@ public class VentanaLogin extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaLogin.class.getName());
 
+    private final UsuarioService usuarioService;
+    
     /**
      * Creates new form VentanaLogin
      */
     public VentanaLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.usuarioService = new UsuarioServiceImpl();
 
     }
 
@@ -170,38 +173,36 @@ public class VentanaLogin extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String usuario = jTextField1.getText().trim();
         String contrasena = new String(jPasswordField1.getPassword());
+
+        // Validar campos vacíos
         if (usuario.isEmpty() || contrasena.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Completa ambos campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Completa ambos campos",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String sql = "SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?";
+        // Llamar a la capa de servicio para autenticar
+        boolean autenticado = usuarioService.autenticar(usuario, contrasena);
 
-        try (Connection conn = ConexionBD.getConnection();
-            java.sql.PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+        if (autenticado) {
+            // Login exitoso
+            JOptionPane.showMessageDialog(this,
+                    "Bienvenido, " + usuarioService.getUsuarioAutenticado().getNombre(),
+                    "Login exitoso",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-        if (conn == null || ps == null) {
-            JOptionPane.showMessageDialog(this, "No se pudo conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
+            ventanaPrincipal.setVisible(true);
+            this.dispose();
+
+        } else {
+            // Credenciales inválidas
+            JOptionPane.showMessageDialog(this,
+                    "Usuario y/o contraseña inválidos",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        ps.setString(1, usuario);
-        ps.setString(2, contrasena);
-        
-        try (java.sql.ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                // Login exitoso
-                VentanaPrincipal ventana1 = new VentanaPrincipal();
-                ventana1.setVisible(true);
-                this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Usuario y/o contraseña inválidos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        
-        } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
