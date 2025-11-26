@@ -1,10 +1,9 @@
-package com.mycompany.app_reserva_vuelos.model;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
+package com.mycompany.app_reserva_vuelos.model;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -12,21 +11,28 @@ package com.mycompany.app_reserva_vuelos.model;
  */
 public class Vuelo {
     private int idVuelo;
-    private String origen;
-    private String destino;
-    private String fecha; // luego se puede usar LocalDate
-    private int asientosDisponibles;
+    private String numeroVuelo;
+    private int idAeropuertoOrigen;
+    private int idAeropuertoDestino;
+    private int idAeronave;
+    private LocalDateTime fechaHoraSalida;
+    private LocalDateTime fechaHoraLlegada;
 
+    // Constructores
     public Vuelo() {}
 
-    public Vuelo(int idVuelo, String origen, String destino, String fecha, int asientosDisponibles) {
+    public Vuelo(int idVuelo, String numeroVuelo, int idAeropuertoOrigen, int idAeropuertoDestino, 
+                 int idAeronave, LocalDateTime fechaHoraSalida, LocalDateTime fechaHoraLlegada) {
         this.idVuelo = idVuelo;
-        this.origen = origen;
-        this.destino = destino;
-        this.fecha = fecha;
-        this.asientosDisponibles = asientosDisponibles;
+        this.numeroVuelo = numeroVuelo;
+        this.idAeropuertoOrigen = idAeropuertoOrigen;
+        this.idAeropuertoDestino = idAeropuertoDestino;
+        this.idAeronave = idAeronave;
+        this.fechaHoraSalida = fechaHoraSalida;
+        this.fechaHoraLlegada = fechaHoraLlegada;
     }
 
+    // Getters y Setters
     public int getIdVuelo() {
         return idVuelo;
     }
@@ -35,35 +41,64 @@ public class Vuelo {
         this.idVuelo = idVuelo;
     }
 
-    public String getOrigen() {
-        return origen;
+    public String getNumeroVuelo() {
+        return numeroVuelo;
     }
 
-    public void setOrigen(String origen) {
-        this.origen = origen;
+    public void setNumeroVuelo(String numeroVuelo) {
+        this.numeroVuelo = numeroVuelo;
     }
 
-    public String getDestino() {
-        return destino;
+    public int getIdAeropuertoOrigen() {
+        return idAeropuertoOrigen;
     }
 
-    public void setDestino(String destino) {
-        this.destino = destino;
+    public void setIdAeropuertoOrigen(int idAeropuertoOrigen) {
+        this.idAeropuertoOrigen = idAeropuertoOrigen;
     }
 
-    public String getFecha() {
-        return fecha;
+    public int getIdAeropuertoDestino() {
+        return idAeropuertoDestino;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public void setIdAeropuertoDestino(int idAeropuertoDestino) {
+        this.idAeropuertoDestino = idAeropuertoDestino;
     }
 
-    public int getAsientosDisponibles() {
-        return asientosDisponibles;
+    public int getIdAeronave() {
+        return idAeronave;
     }
 
-    public void setAsientosDisponibles(int asientosDisponibles) {
-        this.asientosDisponibles = asientosDisponibles;
+    public void setIdAeronave(int idAeronave) {
+        this.idAeronave = idAeronave;
+    }
+
+    public LocalDateTime getFechaHoraSalida() {
+        return fechaHoraSalida;
+    }
+
+    public void setFechaHoraSalida(LocalDateTime fechaHoraSalida) {
+        this.fechaHoraSalida = fechaHoraSalida;
+    }
+
+    public LocalDateTime getFechaHoraLlegada() {
+        return fechaHoraLlegada;
+    }
+
+    public void setFechaHoraLlegada(LocalDateTime fechaHoraLlegada) {
+        this.fechaHoraLlegada = fechaHoraLlegada;
+    }
+
+    @Override
+    public String toString() {
+        return "Vuelo{" +
+                "idVuelo=" + idVuelo +
+                ", numeroVuelo='" + numeroVuelo + '\'' +
+                ", idAeropuertoOrigen=" + idAeropuertoOrigen +
+                ", idAeropuertoDestino=" + idAeropuertoDestino +
+                ", idAeronave=" + idAeronave +
+                ", fechaHoraSalida=" + fechaHoraSalida +
+                ", fechaHoraLlegada=" + fechaHoraLlegada +
+                '}';
     }
 }

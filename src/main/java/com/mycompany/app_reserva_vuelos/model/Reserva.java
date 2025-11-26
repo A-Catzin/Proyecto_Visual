@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.app_reserva_vuelos.model;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -10,19 +11,23 @@ package com.mycompany.app_reserva_vuelos.model;
  */
 public class Reserva {
     private int idReserva;
-    private int idVuelo;
-    private int idCliente;
-    private String fechaReserva;
+    private String codigoReserva;
+    private int idPasajero;
+    private LocalDateTime fechaReserva;
+    private String estadoReserva;
 
+    // Constructores
     public Reserva() {}
 
-    public Reserva(int idReserva, int idVuelo, int idCliente, String fechaReserva) {
+    public Reserva(int idReserva, String codigoReserva, int idPasajero, LocalDateTime fechaReserva, String estadoReserva) {
         this.idReserva = idReserva;
-        this.idVuelo = idVuelo;
-        this.idCliente = idCliente;
+        this.codigoReserva = codigoReserva;
+        this.idPasajero = idPasajero;
         this.fechaReserva = fechaReserva;
+        this.estadoReserva = estadoReserva;
     }
 
+    // Getters y Setters
     public int getIdReserva() {
         return idReserva;
     }
@@ -31,27 +36,46 @@ public class Reserva {
         this.idReserva = idReserva;
     }
 
-    public int getIdVuelo() {
-        return idVuelo;
+    public String getCodigoReserva() {
+        return codigoReserva;
     }
 
-    public void setIdVuelo(int idVuelo) {
-        this.idVuelo = idVuelo;
+    public void setCodigoReserva(String codigoReserva) {
+        this.codigoReserva = codigoReserva;
     }
 
-    public int getIdCliente() {
-        return idCliente;
+    public int getIdPasajero() {
+        return idPasajero;
     }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+    public void setIdPasajero(int idPasajero) {
+        this.idPasajero = idPasajero;
     }
 
-    public String getFechaReserva() {
+    public LocalDateTime getFechaReserva() {
         return fechaReserva;
     }
 
-    public void setFechaReserva(String fechaReserva) {
+    public void setFechaReserva(LocalDateTime fechaReserva) {
         this.fechaReserva = fechaReserva;
+    }
+
+    public String getEstadoReserva() {
+        return estadoReserva;
+    }
+
+    public void setEstadoReserva(String estadoReserva) {
+        this.estadoReserva = estadoReserva;
+    }
+
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "idReserva=" + idReserva +
+                ", codigoReserva='" + codigoReserva + '\'' +
+                ", idPasajero=" + idPasajero +
+                ", fechaReserva=" + fechaReserva +
+                ", estadoReserva='" + estadoReserva + '\'' +
+                '}';
     }
 }
