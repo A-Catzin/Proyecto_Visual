@@ -7,6 +7,7 @@ package com.mycompany.app_reserva_vuelos.service;
 import com.mycompany.app_reserva_vuelos.dao.UsuarioDao;
 import com.mycompany.app_reserva_vuelos.dao.UsuarioDaoImpl;
 import com.mycompany.app_reserva_vuelos.model.Usuario;
+import java.util.List;
 
 /**
  *
@@ -74,34 +75,26 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public int registrarUsuario(String nombre, String nombreUsuario, String email, String contraseña) {
-        // Validación básica de campos
-        if (nombre == null || nombre.trim().isEmpty()
-                || nombreUsuario == null || nombreUsuario.trim().isEmpty()
-                || email == null || email.trim().isEmpty()
-                || contraseña == null || contraseña.trim().isEmpty()) {
-            return -1; // datos inválidos
+    public int registrarUsuario(Usuario usuario) {
+        // Validar si el usuario ya existe
+        if (usuarioDao.obtenerPorNombreUsuario(usuario.getUsuario()) != null) {
+            return -1; // Usuario ya existe
         }
+        return usuarioDao.registrar(usuario);
+    }
 
-        try {
-            // Verificar si ya existe un usuario con ese nombre de usuario
-            Usuario existente = usuarioDao.obtenerPorNombreUsuario(nombreUsuario);
-            if (existente != null) {
-                return -2; // nombre de usuario ya en uso
-            }
+    @Override
+    public void modificarUsuario(Usuario usuario) {
+        usuarioDao.modificar(usuario);
+    }
 
-            Usuario nuevo = new Usuario();
-            nuevo.setNombre(nombre);
-            nuevo.setUsuario(nombreUsuario);
-            nuevo.setEmail(email);
-            nuevo.setContraseña(contraseña);
+    @Override
+    public void eliminarUsuario(int idUsuario) {
+        usuarioDao.eliminar(idUsuario);
+    }
 
-            int idGenerado = usuarioDao.registrar(nuevo);
-            return (idGenerado > 0) ? idGenerado : -1;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+    @Override
+    public List<Usuario> listarUsuarios() {
+        return usuarioDao.listar();
     }
 }

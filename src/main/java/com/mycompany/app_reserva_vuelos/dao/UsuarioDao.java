@@ -6,27 +6,16 @@ package com.mycompany.app_reserva_vuelos.dao;
 
 import com.mycompany.app_reserva_vuelos.model.Usuario;
 
-/**
- *
- * @author tehca
- */
 public interface UsuarioDao {
-
-    /**
-     * Busca un usuario por su nombre de usuario y contraseña.
-     * Devuelve el objeto Usuario si las credenciales son correctas,
-     * o null si no hay coincidencia.
-     */
     Usuario obtenerPorCredenciales(String usuario, String contraseña);
 
-    /**
-     * Busca un usuario por su nombre de usuario (sin validar contraseña).
-     */
     Usuario obtenerPorNombreUsuario(String usuario);
 
-    /**
-     * Registra un nuevo usuario en la base de datos.
-     * Devuelve el ID generado si se insertó correctamente, o -1 si falló.
-     */
     int registrar(Usuario usuario);
+
+    void modificar(Usuario usuario);
+
+    void eliminar(int idUsuario);
+
+    java.util.List<Usuario> listar();
 }

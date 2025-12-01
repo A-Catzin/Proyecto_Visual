@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,11 +23,11 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
     @Override
     public Usuario obtenerPorCredenciales(String usuario, String contraseña) {
-        String sql = "SELECT id, nombre, usuario, email, contraseña " +
-                     "FROM usuarios WHERE usuario = ? AND contraseña = ?";
+        String sql = "SELECT id, nombre, usuario, email, contraseña, telefono, rol, estado " +
+                "FROM usuarios WHERE usuario = ? AND contraseña = ?";
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para validar usuario.");
@@ -50,11 +52,11 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
     @Override
     public Usuario obtenerPorNombreUsuario(String usuario) {
-        String sql = "SELECT id, nombre, usuario, email, contraseña " +
-                     "FROM usuarios WHERE usuario = ?";
+        String sql = "SELECT id, nombre, usuario, email, contraseña, telefono, rol, estado " +
+                "FROM usuarios WHERE usuario = ?";
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para consultar usuario.");
@@ -78,13 +80,13 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
     @Override
     public int registrar(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nombre, usuario, email, contraseña) " +
-                     "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO usuarios (nombre, usuario, email, contraseña, telefono, rol, estado) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         int idGenerado = -1;
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para registrar usuario.");
@@ -94,7 +96,10 @@ public class UsuarioDaoImpl implements UsuarioDao {
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getUsuario());
             ps.setString(3, usuario.getEmail());
-            ps.setString(4, usuario.getContraseña()); // en producción usar hash (bcrypt, etc.)
+            ps.setString(4, usuario.getContraseña());
+            ps.setString(5, usuario.getTelefono());
+            ps.setString(6, usuario.getRol());
+            ps.setString(7, usuario.getEstado());
 
             int filas = ps.executeUpdate();
             if (filas == 0) {
@@ -115,6 +120,72 @@ public class UsuarioDaoImpl implements UsuarioDao {
         return idGenerado;
     }
 
+    @Override
+    public void modificar(Usuario usuario) {
+        String sql = "UPDATE usuarios SET nombre = ?, usuario = ?, email = ?, contraseña = ?, telefono = ?, rol = ?, estado = ? WHERE id = ?";
+
+        try (Connection conn = ConexionBD.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (conn == null)
+                return;
+
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getUsuario());
+            ps.setString(3, usuario.getEmail());
+            ps.setString(4, usuario.getContraseña());
+            ps.setString(5, usuario.getTelefono());
+            ps.setString(6, usuario.getRol());
+            ps.setString(7, usuario.getEstado());
+            ps.setInt(8, usuario.getId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void eliminar(int idUsuario) {
+        String sql = "DELETE FROM usuarios WHERE id = ?";
+
+        try (Connection conn = ConexionBD.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (conn == null)
+                return;
+
+            ps.setInt(1, idUsuario);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Usuario> listar() {
+        List<Usuario> lista = new ArrayList<>();
+        String sql = "SELECT id, nombre, usuario, email, contraseña, telefono, rol, estado FROM usuarios";
+
+        try (Connection conn = ConexionBD.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            if (conn == null)
+                return lista;
+
+            while (rs.next()) {
+                lista.add(mapearResultSetAUsuario(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
     // ---------- método privado de mapeo ----------
 
     private Usuario mapearResultSetAUsuario(ResultSet rs) throws SQLException {
@@ -124,6 +195,9 @@ public class UsuarioDaoImpl implements UsuarioDao {
         u.setUsuario(rs.getString("usuario"));
         u.setEmail(rs.getString("email"));
         u.setContraseña(rs.getString("contraseña"));
+        u.setTelefono(rs.getString("telefono"));
+        u.setRol(rs.getString("rol"));
+        u.setEstado(rs.getString("estado"));
         return u;
     }
 }

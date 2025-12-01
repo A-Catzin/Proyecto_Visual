@@ -5,7 +5,6 @@
 package com.mycompany.app_reserva_vuelos.service;
 
 import com.mycompany.app_reserva_vuelos.model.Vuelo;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,12 +12,7 @@ import java.util.List;
  *
  * @author tehca
  */
-
-/**
- * Interface del service de Vuelos.
- * Define las operaciones de negocio relacionadas con Vuelos.
- */
-public interface VueloService { // Nombre de la interfaz sin 'I'
+public interface VueloService {
 
     List<Vuelo> buscarVuelos(int idAeropuertoOrigen, int idAeropuertoDestino, LocalDate fecha);
 
@@ -26,4 +20,12 @@ public interface VueloService { // Nombre de la interfaz sin 'I'
             int idAeropuertoOrigen, int idAeropuertoDestino, LocalDate fecha);
 
     Vuelo obtenerVueloPorId(int idVuelo);
+
+    int registrarVuelo(Vuelo vuelo);
+
+    void modificarVuelo(Vuelo vuelo);
+
+    void eliminarVuelo(int idVuelo);
+
+    List<Vuelo> listarVuelos();
 }

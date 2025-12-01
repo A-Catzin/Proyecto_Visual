@@ -19,12 +19,7 @@ import java.util.List;
  *
  * @author tehca
  */
-
-/**
- * Implementación de VueloService.
- * La UI debe depender de VueloService, no de esta clase concreta.
- */
-public class VueloServiceImpl implements VueloService { // Implementa la interfaz VueloService
+public class VueloServiceImpl implements VueloService {
 
     private final VueloDao vueloDao;
     private final AeropuertoDao aeropuertoDao;
@@ -60,10 +55,10 @@ public class VueloServiceImpl implements VueloService { // Implementa la interfa
         private String codigoIataDestino;
 
         public VueloInfoUI(Vuelo vuelo,
-                           String nombreAeropuertoOrigen,
-                           String nombreAeropuertoDestino,
-                           String codigoIataOrigen,
-                           String codigoIataDestino) {
+                String nombreAeropuertoOrigen,
+                String nombreAeropuertoDestino,
+                String codigoIataOrigen,
+                String codigoIataDestino) {
             this.vuelo = vuelo;
             this.nombreAeropuertoOrigen = nombreAeropuertoOrigen;
             this.nombreAeropuertoDestino = nombreAeropuertoDestino;
@@ -71,15 +66,25 @@ public class VueloServiceImpl implements VueloService { // Implementa la interfa
             this.codigoIataDestino = codigoIataDestino;
         }
 
-        public Vuelo getVuelo() { return vuelo; }
+        public Vuelo getVuelo() {
+            return vuelo;
+        }
 
-        public String getNombreAeropuertoOrigen() { return nombreAeropuertoOrigen; }
+        public String getNombreAeropuertoOrigen() {
+            return nombreAeropuertoOrigen;
+        }
 
-        public String getNombreAeropuertoDestino() { return nombreAeropuertoDestino; }
+        public String getNombreAeropuertoDestino() {
+            return nombreAeropuertoDestino;
+        }
 
-        public String getCodigoIataOrigen() { return codigoIataOrigen; }
+        public String getCodigoIataOrigen() {
+            return codigoIataOrigen;
+        }
 
-        public String getCodigoIataDestino() { return codigoIataDestino; }
+        public String getCodigoIataDestino() {
+            return codigoIataDestino;
+        }
 
         @Override
         public String toString() {
@@ -119,11 +124,26 @@ public class VueloServiceImpl implements VueloService { // Implementa la interfa
 
     @Override
     public Vuelo obtenerVueloPorId(int idVuelo) {
-        try {
-            return vueloDao.obtenerPorId(idVuelo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al obtener vuelo", e);
-        }
+        return vueloDao.obtenerPorId(idVuelo);
+    }
+
+    @Override
+    public int registrarVuelo(Vuelo vuelo) {
+        return vueloDao.registrar(vuelo);
+    }
+
+    @Override
+    public void modificarVuelo(Vuelo vuelo) {
+        vueloDao.modificar(vuelo);
+    }
+
+    @Override
+    public void eliminarVuelo(int idVuelo) {
+        vueloDao.eliminar(idVuelo);
+    }
+
+    @Override
+    public List<Vuelo> listarVuelos() {
+        return vueloDao.listar();
     }
 }

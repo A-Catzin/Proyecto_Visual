@@ -14,16 +14,24 @@ public class Usuario {
     private String usuario;
     private String email;
     private String contraseña;
+    private String telefono;
+    private String rol;
+    private String estado;
 
     // Constructores
-    public Usuario() {}
+    public Usuario() {
+    }
 
-    public Usuario(int id, String nombre, String usuario, String email, String contraseña) {
+    public Usuario(int id, String nombre, String usuario, String email, String contraseña, String telefono, String rol,
+            String estado) {
         this.id = id;
         this.nombre = nombre;
         this.usuario = usuario;
         this.email = email;
         this.contraseña = contraseña;
+        this.telefono = telefono;
+        this.rol = rol;
+        this.estado = estado;
     }
 
     // Getters y Setters
@@ -67,6 +75,30 @@ public class Usuario {
         this.contraseña = contraseña;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -74,6 +106,9 @@ public class Usuario {
                 ", nombre='" + nombre + '\'' +
                 ", usuario='" + usuario + '\'' +
                 ", email='" + email + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", rol='" + rol + '\'' +
+                ", estado='" + estado + '\'' +
                 '}';
     }
 }

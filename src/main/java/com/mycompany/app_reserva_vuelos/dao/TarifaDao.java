@@ -24,4 +24,12 @@ public interface TarifaDao {
      * Obtiene una tarifa específica por vuelo + clase.
      */
     Tarifa obtenerPorVueloYClase(int idVuelo, int idClase);
+
+    int registrar(Tarifa tarifa);
+
+    void modificar(Tarifa tarifa);
+
+    void eliminar(int idTarifa);
+
+    List<Tarifa> listar();
 }
