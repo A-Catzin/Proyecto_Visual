@@ -4,11 +4,18 @@
  */
 package com.mycompany.app_reserva_vuelos.gui;
 
+import java.awt.CardLayout;
+import java.awt.Color;
+import javax.swing.JLabel;
+
 /**
  *
  * @author Bogard Axel
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
+    
+    private CardLayout cardLayout;
+    private JLabel labelActivo;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName());
 
@@ -17,7 +24,110 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      */
     public VentanaPrincipal() {
         initComponents();
+        configurarCardLayout();
+        configurarEventosMenu();
+        
+        setSize(1366, 768);  // Ajusta según necesites
+        setLocationRelativeTo(null);  // Centra la ventana
+        setResizable(true);
     }
+    
+    private void configurarCardLayout() {
+    cardLayout = new CardLayout();
+    jPanel1.setLayout(cardLayout);
+    
+    jPanel1.add(new PanelReservas(), "buscar");
+    jPanel1.add(new PanelBuscar(), "reservas");
+    jPanel1.add(new PanelVuelosDisponibles(), "mostrar");
+    
+    cardLayout.show(jPanel1, "buscar");
+}
+    
+    private void configurarEventosMenu() {
+    // reservar
+    lblbuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            seleccionarOpcion(lblbuscar, "buscar");
+        }
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblbuscar) {
+                lblbuscar.setForeground(Color.BLUE);
+            }
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblbuscar) {
+                lblbuscar.setForeground(Color.BLACK);
+            }
+        }
+    });
+    
+    lblreservar.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            seleccionarOpcion(lblreservar, "reservas");
+        }
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblreservar) {
+                lblreservar.setForeground(Color.BLUE);
+            }
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblreservar) {
+                lblreservar.setForeground(Color.BLACK);
+            }
+        }
+    });
+    
+    lblmostrar.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            seleccionarOpcion(lblmostrar, "mostrar");
+        }
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblmostrar) {
+                lblmostrar.setForeground(Color.BLUE);
+            }
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblmostrar) {
+                lblmostrar.setForeground(Color.BLACK);
+            }
+        }
+    });
+    
+    lblsalir.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            seleccionarOpcion(lblsalir, "salir");
+        }
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblsalir) {
+                lblsalir.setForeground(Color.BLUE);
+            }
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            if (labelActivo != lblsalir) {
+                lblsalir.setForeground(Color.BLACK);
+            }
+        }
+    });
+    
+    // focus en primer label
+    seleccionarOpcion(lblbuscar, "buscar");
+}
+    
+    
+    private void seleccionarOpcion(JLabel label, String panelName) {
+    // devolver color cuando se cambia de opcion
+    if (labelActivo != null) {
+        labelActivo.setForeground(Color.BLACK);
+    }
+    
+    // activar color del nuevo lbl
+    labelActivo = label;
+    labelActivo.setForeground(new Color(32, 32, 179)); // Azul oscuro para el activo
+    
+    // cambiar panel de opcciones
+    cardLayout.show(jPanel1, panelName);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,41 +138,128 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
-        jMenu4 = new javax.swing.JMenu();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        lblbuscar = new javax.swing.JLabel();
+        lblreservar = new javax.swing.JLabel();
+        lblmostrar = new javax.swing.JLabel();
+        lblsalir = new javax.swing.JLabel();
+        lblbienvenida = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu1.setText("Opciones");
-        jMenuBar1.add(jMenu1);
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Opciones."));
 
-        jMenu2.setText("Reservar");
-        jMenuBar1.add(jMenu2);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 536, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
-        jMenu3.setText("Buscar vuelos");
-        jMenuBar1.add(jMenu3);
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Menú de Usuario.", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP));
 
-        jMenu4.setText("Mostrar vuelos");
-        jMenuBar1.add(jMenu4);
+        lblbuscar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblbuscar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblbuscar.setText("Busca tu vuelo");
+        lblbuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblbuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblbuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblbuscarMouseEntered(evt);
+            }
+        });
 
-        setJMenuBar(jMenuBar1);
+        lblreservar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblreservar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblreservar.setText("Reservar un Vuelo");
+        lblreservar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblreservar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblmostrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblmostrar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblmostrar.setText("Mostrar vuelos disponibles");
+        lblmostrar.setToolTipText("");
+        lblmostrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblmostrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lblsalir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblsalir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblsalir.setText("Salir");
+        lblsalir.setToolTipText("");
+        lblsalir.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lblsalir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblsalir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblsalirMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblbuscar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblreservar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblmostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblsalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(lblbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblreservar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblmostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+
+        lblbienvenida.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
+        lblbienvenida.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblbienvenida.setText("Bienvenido a TUP VUELOS :vvv");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(65, 65, 65)
+                .addComponent(lblbienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 643, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(lblbienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void lblbuscarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblbuscarMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblbuscarMouseEntered
+
+    private void lblsalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblsalirMouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_lblsalirMouseClicked
 
     /**
      * @param args the command line arguments
@@ -90,10 +287,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblbienvenida;
+    private javax.swing.JLabel lblbuscar;
+    private javax.swing.JLabel lblmostrar;
+    private javax.swing.JLabel lblreservar;
+    private javax.swing.JLabel lblsalir;
     // End of variables declaration//GEN-END:variables
 }
