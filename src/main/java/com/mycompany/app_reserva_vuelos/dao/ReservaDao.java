@@ -38,4 +38,9 @@ public interface ReservaDao {
      * Cambia el estado de la reserva (por ejemplo, 'Activa' -> 'Cancelada').
      */
     boolean actualizarEstadoReserva(int idReserva, String nuevoEstado);
+    
+    /**
+     * Lista todas las reservas de un pasajero específico.
+     */
+    List<Reserva> listarReservasPorPasajero(int idPasajero);
 }

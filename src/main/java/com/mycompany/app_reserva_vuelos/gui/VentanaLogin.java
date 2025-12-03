@@ -27,7 +27,7 @@ public class VentanaLogin extends javax.swing.JFrame {
     public VentanaLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.usuarioService = new UsuarioServiceImpl();
+        this.usuarioService = UsuarioServiceImpl.getInstance();
 
     }
 

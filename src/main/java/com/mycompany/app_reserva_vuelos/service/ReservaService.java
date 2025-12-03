@@ -24,4 +24,6 @@ public interface ReservaService { // Nombre de la interfaz sin 'I'
     List<DetalleReserva> obtenerDetallesPorReserva(int idReserva);
 
     ReservaServiceImpl.ReservaCompleta obtenerReservaCompleta(int idReserva);
+
+    List<Reserva> listarReservasPorPasajero(int idPasajero);
 }

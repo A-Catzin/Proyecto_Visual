@@ -26,7 +26,7 @@ public class VentanaRegistro extends javax.swing.JFrame {
         public VentanaRegistro() {
                 initComponents();
                 this.setLocationRelativeTo(null);
-                this.usuarioService = new UsuarioServiceImpl();
+                this.usuarioService = UsuarioServiceImpl.getInstance();
         }
 
         /**

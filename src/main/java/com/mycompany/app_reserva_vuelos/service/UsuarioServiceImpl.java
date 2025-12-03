@@ -14,12 +14,19 @@ import java.util.List;
  * @author tehca
  */
 public class UsuarioServiceImpl implements UsuarioService {
-
+    private static UsuarioServiceImpl instance;
     private final UsuarioDao usuarioDao;
     private Usuario usuarioAutenticado;
 
-    public UsuarioServiceImpl() {
+    private UsuarioServiceImpl() {
         this.usuarioDao = new UsuarioDaoImpl();
+    }
+
+    public static UsuarioServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new UsuarioServiceImpl();
+        }
+        return instance;
     }
 
     public UsuarioServiceImpl(UsuarioDao usuarioDao) {

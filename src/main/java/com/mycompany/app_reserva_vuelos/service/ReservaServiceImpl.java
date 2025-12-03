@@ -113,9 +113,13 @@ public class ReservaServiceImpl implements ReservaService { // Implementa la int
             this.detalles = detalles;
         }
 
-        public Reserva getReserva() { return reserva; }
+        public Reserva getReserva() {
+            return reserva;
+        }
 
-        public List<DetalleReserva> getDetalles() { return detalles; }
+        public List<DetalleReserva> getDetalles() {
+            return detalles;
+        }
     }
 
     @Override
@@ -130,6 +134,16 @@ public class ReservaServiceImpl implements ReservaService { // Implementa la int
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error al obtener la reserva completa", e);
+        }
+    }
+
+    @Override
+    public List<Reserva> listarReservasPorPasajero(int idPasajero) {
+        try {
+            return reservaDao.listarReservasPorPasajero(idPasajero);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al listar reservas del pasajero", e);
         }
     }
 }

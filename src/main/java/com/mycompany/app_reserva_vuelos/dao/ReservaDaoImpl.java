@@ -23,9 +23,9 @@ public class ReservaDaoImpl implements ReservaDao {
     @Override
     public int crearReserva(Reserva reserva, List<DetalleReserva> detalles) {
         String sqlReserva = "INSERT INTO reservas (Codigo_Reserva, ID_Pasajero, Fecha_Reserva, Estado_Reserva) " +
-                            "VALUES (?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO detalle_reserva (ID_Reserva, ID_Vuelo, ID_Tarifa, Numero_Asiento) " +
-                            "VALUES (?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?)";
 
         int idGenerado = -1;
 
@@ -97,12 +97,12 @@ public class ReservaDaoImpl implements ReservaDao {
     @Override
     public Reserva obtenerReservaPorId(int idReserva) {
         String sql = "SELECT ID_Reserva, Codigo_Reserva, ID_Pasajero, Fecha_Reserva, Estado_Reserva " +
-                     "FROM reservas WHERE ID_Reserva = ?";
+                "FROM reservas WHERE ID_Reserva = ?";
 
         Reserva reserva = null;
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para consultar reserva.");
@@ -127,12 +127,12 @@ public class ReservaDaoImpl implements ReservaDao {
     @Override
     public List<DetalleReserva> obtenerDetallesPorIdReserva(int idReserva) {
         String sql = "SELECT ID_Detalle, ID_Reserva, ID_Vuelo, ID_Tarifa, Numero_Asiento " +
-                     "FROM detalle_reserva WHERE ID_Reserva = ?";
+                "FROM detalle_reserva WHERE ID_Reserva = ?";
 
         List<DetalleReserva> detalles = new ArrayList<>();
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para consultar detalles de reserva.");
@@ -166,7 +166,7 @@ public class ReservaDaoImpl implements ReservaDao {
         boolean exito = false;
 
         try (Connection conn = ConexionBD.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (conn == null) {
                 System.err.println("No se pudo obtener conexión para actualizar reserva.");
@@ -206,5 +206,35 @@ public class ReservaDaoImpl implements ReservaDao {
         reserva.setEstadoReserva(rs.getString("Estado_Reserva"));
 
         return reserva;
+    }
+
+    @Override
+    public List<Reserva> listarReservasPorPasajero(int idPasajero) {
+        String sql = "SELECT ID_Reserva, Codigo_Reserva, ID_Pasajero, Fecha_Reserva, Estado_Reserva " +
+                "FROM reservas WHERE ID_Pasajero = ? ORDER BY Fecha_Reserva DESC";
+
+        List<Reserva> reservas = new ArrayList<>();
+
+        try (Connection conn = ConexionBD.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (conn == null) {
+                System.err.println("No se pudo obtener conexión para listar reservas.");
+                return reservas;
+            }
+
+            ps.setInt(1, idPasajero);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reservas.add(mapearResultSetAReserva(rs));
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return reservas;
     }
 }
