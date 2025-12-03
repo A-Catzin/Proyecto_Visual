@@ -36,8 +36,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     cardLayout = new CardLayout();
     jPanel1.setLayout(cardLayout);
     
-    jPanel1.add(new PanelReservas(), "buscar");
-    jPanel1.add(new PanelBuscar(), "reservas");
+    jPanel1.add(new PanelBuscar(), "buscar");
+    jPanel1.add(new PanelReservas(), "reservas");
     jPanel1.add(new PanelVuelosDisponibles(), "mostrar");
     
     cardLayout.show(jPanel1, "buscar");
