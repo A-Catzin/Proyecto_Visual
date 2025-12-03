@@ -187,36 +187,9 @@ public class PanelGestionUsuarios extends javax.swing.JPanel {
                 u.setNombre(nombre);
                 u.setEmail(email);
                 u.setTelefono(telefono);
-                u.setContraseña(password.isEmpty() ? null : password); // Si está vacía, no cambiar (lógica a manejar en
-                                                                       // DAO/Service si se desea, o aquí)
-                // Nota: El DAO actual actualiza todo. Si la contraseña es null/vacía, la
-                // borraría o pondría vacía.
-                // Deberíamos manejar esto mejor. Por ahora, obligamos a poner contraseña o
-                // recuperamos la vieja si pudiéramos.
-                // Dado que no podemos recuperar la vieja fácilmente sin consultar, y el DAO
-                // hace update de todo...
-                // Lo ideal es que si el campo password está vacío, no se actualice.
-                // Pero el DAO 'modificar' hace UPDATE contraseña = ?.
-                // Vamos a asumir que si se deja vacío, se mantiene la actual (requiere cambio
-                // en DAO o consultar primero).
-                // Para simplificar: Si está vacío, avisar que se requiere contraseña o
-                // implementar lógica de "mantener anterior".
-                // Voy a consultar el usuario actual para mantener la contraseña si el campo
-                // está vacío.
+                u.setContraseña(password.isEmpty() ? null : password);
 
                 if (password.isEmpty()) {
-                        // Recuperar usuario actual para no perder la contraseña
-                        // Esto es ineficiente pero seguro para este nivel de implementación.
-                        // Sin embargo, no tengo método 'obtenerPorId' en UsuarioService expuesto en la
-                        // interfaz (solo obtenerPorNombreUsuario).
-                        // Usaré obtenerPorNombreUsuario con el nombre original de la tabla? No, el
-                        // nombre puede haber cambiado.
-                        // Necesito obtenerPorId en el servicio.
-                        // Por ahora, exigiré contraseña para modificar, o asumiré que se quiere
-                        // cambiar.
-                        // O mejor: Si está vacía, NO la cambio. Pero el DAO la cambiará a vacía.
-                        // Voy a dejarlo así: Si está vacía, se guarda vacía (mala práctica) o aviso.
-                        // Avisaré.
                         JOptionPane.showMessageDialog(this,
                                         "Para modificar, reingrese la contraseña o ingrese una nueva.", "Aviso",
                                         JOptionPane.WARNING_MESSAGE);

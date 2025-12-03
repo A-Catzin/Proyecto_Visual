@@ -14,8 +14,10 @@ public class Ciudad {
     private int idPais;
 
     // Constructores
+    /** Constructor vacío para crear una instancia de Ciudad sin parámetros */
     public Ciudad() {}
 
+    /** Constructor con parámetros para inicializar una Ciudad con datos específicos */
     public Ciudad(int idCiudad, String nombreCiudad, int idPais) {
         this.idCiudad = idCiudad;
         this.nombreCiudad = nombreCiudad;
@@ -23,30 +25,37 @@ public class Ciudad {
     }
 
     // Getters y Setters
+    /** Obtiene el identificador único de la ciudad */
     public int getIdCiudad() {
         return idCiudad;
     }
 
+    /** Establece el identificador único de la ciudad */
     public void setIdCiudad(int idCiudad) {
         this.idCiudad = idCiudad;
     }
 
+    /** Obtiene el nombre de la ciudad */
     public String getNombreCiudad() {
         return nombreCiudad;
     }
 
+    /** Establece el nombre de la ciudad */
     public void setNombreCiudad(String nombreCiudad) {
         this.nombreCiudad = nombreCiudad;
     }
 
+    /** Obtiene el identificador del país al que pertenece */
     public int getIdPais() {
         return idPais;
     }
 
+    /** Establece el identificador del país al que pertenece */
     public void setIdPais(int idPais) {
         this.idPais = idPais;
     }
 
+    /** Retorna la representación en string de la ciudad */
     @Override
     public String toString() {
         return "Ciudad{" +

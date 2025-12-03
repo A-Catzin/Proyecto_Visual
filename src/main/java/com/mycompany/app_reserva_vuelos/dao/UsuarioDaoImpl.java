@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Implementación DAO para operaciones CRUD de Usuario
  * @author tehca
  */
 public class UsuarioDaoImpl implements UsuarioDao {
 
+    /** Obtiene un usuario verificando sus credenciales de login */
     @Override
     public Usuario obtenerPorCredenciales(String usuario, String contraseña) {
         String sql = "SELECT id, nombre, usuario, email, contraseña, telefono, rol, estado " +
@@ -35,7 +36,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
             }
 
             ps.setString(1, usuario);
-            ps.setString(2, contraseña); // en un sistema real se usaría hash
+            ps.setString(2, contraseña);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -50,6 +51,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
         return null;
     }
 
+    /** Obtiene un usuario específico por su nombre de usuario */
     @Override
     public Usuario obtenerPorNombreUsuario(String usuario) {
         String sql = "SELECT id, nombre, usuario, email, contraseña, telefono, rol, estado " +
@@ -77,7 +79,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
         return null;
     }
-
+    /** Registra un nuevo usuario en la base de datos y retorna su ID generado */
     @Override
     public int registrar(Usuario usuario) {
         String sql = "INSERT INTO usuarios (nombre, usuario, email, contraseña, telefono, rol, estado) " +
@@ -119,7 +121,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
         return idGenerado;
     }
-
+    /** Modifica los datos de un usuario existente */
     @Override
     public void modificar(Usuario usuario) {
         String sql = "UPDATE usuarios SET nombre = ?, usuario = ?, email = ?, contraseña = ?, telefono = ?, rol = ?, estado = ? WHERE id = ?";
@@ -145,7 +147,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
             e.printStackTrace();
         }
     }
-
+    /** Elimina un usuario por su identificador */
     @Override
     public void eliminar(int idUsuario) {
         String sql = "DELETE FROM usuarios WHERE id = ?";
@@ -163,7 +165,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
             e.printStackTrace();
         }
     }
-
+    /** Obtiene la lista completa de usuarios de la base de datos */
     @Override
     public List<Usuario> listar() {
         List<Usuario> lista = new ArrayList<>();
@@ -186,8 +188,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
         return lista;
     }
 
-    // ---------- método privado de mapeo ----------
-
+    /** Mapea un registro de ResultSet a un objeto Usuario */
     private Usuario mapearResultSetAUsuario(ResultSet rs) throws SQLException {
         Usuario u = new Usuario();
         u.setId(rs.getInt("id"));

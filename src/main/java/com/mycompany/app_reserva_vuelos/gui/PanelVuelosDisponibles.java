@@ -95,7 +95,7 @@ public class PanelVuelosDisponibles extends javax.swing.JPanel {
             List<Tarifa> tarifas = tarifaService.listarTarifasPorVuelo(vuelo.getIdVuelo());
             BigDecimal precioMinimo = BigDecimal.ZERO;
             if (!tarifas.isEmpty()) {
-                precioMinimo = tarifas.get(0).getPrecio();
+                precioMinimo = tarifas.getFirst().getPrecio();
                 for (Tarifa t : tarifas) {
                     if (t.getPrecio().compareTo(precioMinimo) < 0) {
                         precioMinimo = t.getPrecio();

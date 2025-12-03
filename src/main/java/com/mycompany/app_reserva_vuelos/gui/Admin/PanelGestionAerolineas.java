@@ -88,8 +88,6 @@ public class PanelGestionAerolineas extends javax.swing.JPanel {
     private void llenarCamposDesdeTabla() {
         int fila = jTable1.getSelectedRow();
         if (fila != -1) {
-            // Asumiendo el orden de columnas: ID, IATA, Nombre, País, Teléfono, Email,
-            // Estado
             jTextField1
                     .setText(modeloTabla.getValueAt(fila, 1) != null ? modeloTabla.getValueAt(fila, 1).toString() : ""); // IATA
             jTextField2
@@ -100,29 +98,6 @@ public class PanelGestionAerolineas extends javax.swing.JPanel {
                     .setText(modeloTabla.getValueAt(fila, 4) != null ? modeloTabla.getValueAt(fila, 4).toString() : ""); // Teléfono
             jTextField5
                     .setText(modeloTabla.getValueAt(fila, 5) != null ? modeloTabla.getValueAt(fila, 5).toString() : ""); // Email
-
-            // Estado (JComboBox o TextField? En el diseño original parece haber un combo
-            // cmbOrigen1 que usaremos para estado por ahora si no hay otro)
-            // Revisando el initComponents original, cmbOrigen1 parece ser una lista de
-            // aeropuertos/ciudades.
-            // El label "Estado" está en gridx=6, gridy=0. Y cmbOrigen1 está en gridx=6,
-            // gridy=1.
-            // Parece que cmbOrigen1 se usaba para otra cosa o se reutilizó.
-            // Para "Estado", lo ideal sería un ComboBox con "Activo"/"Inactivo".
-            // Por ahora usaremos cmbOrigen1 si es lo que hay, o asumiremos que es un campo
-            // de texto si lo cambiamos.
-            // Dado que cmbOrigen1 tiene ciudades, NO es adecuado para Estado.
-            // Voy a asumir que el usuario quiere gestionar el estado, pero la UI actual
-            // tiene un combo de ciudades.
-            // Voy a ignorar el combo de ciudades para el estado y usar un valor por defecto
-            // o tratar de usarlo si se puede editar.
-            // MEJOR: Voy a usar el combo cmbOrigen1 como si fuera el selector de Estado,
-            // limpiando sus items.
-
-            // Nota: En el diseño original, cmbOrigen1 tiene ciudades. Eso es confuso para
-            // "Estado".
-            // Pero el label encima dice "Estado".
-            // Voy a reconfigurar ese combo para que tenga Activo/Inactivo.
         }
     }
 

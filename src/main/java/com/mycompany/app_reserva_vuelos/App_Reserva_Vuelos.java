@@ -12,6 +12,7 @@ import java.sql.Connection;
  * @author tehca
  */
 public class App_Reserva_Vuelos {
+    /** Punto de entrada de la aplicación - inicializa la BD y abre la ventana de login */
     public static void main(String[] args) {
         // 1. Inicializar la base de datos
         ConexionBD.inicializarSiNoExiste(); // <-- CORREGIDO: 'i' minúscula

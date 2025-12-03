@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class AerolineaDaoImpl implements AerolineaDao {
 
+    /** Registra una nueva aerolinea en la base de datos */
     @Override
     public int registrar(Aerolinea aerolinea) {
         String sql = "INSERT INTO aerolineas (nombre_aerolinea, codigo_iata, pais, estado, telefono, email) VALUES (?, ?, ?, ?, ?, ?)";
@@ -49,6 +50,7 @@ public class AerolineaDaoImpl implements AerolineaDao {
         return idGenerado;
     }
 
+    /** Modifica los datos de una aerolinea existente */
     @Override
     public void modificar(Aerolinea aerolinea) {
         String sql = "UPDATE aerolineas SET nombre_aerolinea = ?, codigo_iata = ?, pais = ?, estado = ?, telefono = ?, email = ? WHERE id_aerolinea = ?";
@@ -69,7 +71,7 @@ public class AerolineaDaoImpl implements AerolineaDao {
             e.printStackTrace();
         }
     }
-
+    /** Elimina una aerolinea por su identificador */
     @Override
     public void eliminar(int idAerolinea) {
         String sql = "DELETE FROM aerolineas WHERE id_aerolinea = ?";
@@ -83,7 +85,7 @@ public class AerolineaDaoImpl implements AerolineaDao {
             e.printStackTrace();
         }
     }
-
+    /** Obtiene la lista completa de aerolineas de la base de datos */
     @Override
     public List<Aerolinea> listar() {
         List<Aerolinea> lista = new ArrayList<>();
@@ -109,7 +111,7 @@ public class AerolineaDaoImpl implements AerolineaDao {
         }
         return lista;
     }
-
+    /** Obtiene una aerolinea específica por su identificador */
     @Override
     public Aerolinea obtenerPorId(int idAerolinea) {
         String sql = "SELECT id_aerolinea, nombre_aerolinea, codigo_iata, pais, estado, telefono, email FROM aerolineas WHERE id_aerolinea = ?";

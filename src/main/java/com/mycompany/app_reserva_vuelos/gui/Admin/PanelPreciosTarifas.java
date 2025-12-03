@@ -217,8 +217,6 @@ public class PanelPreciosTarifas extends javax.swing.JPanel {
 
                 // Seleccionar clase
                 String nombreClase = obtenerNombreClase(t.getIdClase());
-                // Ajustar selección combo clase (Económica, Ejecutiva, Primera Clase.)
-                // Note: The combo box items have specific strings, need to match them.
                 for (int i = 0; i < jComboBox1.getItemCount(); i++) {
                     if (jComboBox1.getItemAt(i).contains(nombreClase)) {
                         jComboBox1.setSelectedIndex(i);

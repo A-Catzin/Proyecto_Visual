@@ -14,6 +14,7 @@ public class ConexionBD {
     
     private static final String URL = "jdbc:sqlite:proyectovisual.db";
 
+    /** Establece la conexión con la base de datos SQLite y habilita las claves foráneas */
     public static Connection getConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -33,6 +34,7 @@ public class ConexionBD {
         }
     }
 
+    /** Inicializa la base de datos si no existe, creándola desde un script SQL */
     public static void inicializarSiNoExiste() {
         File dbFile = new File("proyectovisual.db");
 
@@ -49,7 +51,7 @@ public class ConexionBD {
             System.out.println("Base de datos encontrada. Conexión lista.");
         }
     }
-
+    /** Lee y ejecuta sentencias SQL desde un archivo script línea por línea */
     private static void ejecutarScriptSQL(String rutaArchivo) throws SQLException, IOException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
@@ -84,7 +86,7 @@ public class ConexionBD {
             System.out.println("Script SQL ejecutado correctamente.");
         }
     }
-
+    /** Cierra la conexión con la base de datos de forma segura */
     public static void cerrarConexion(Connection conn) {
         if (conn != null) {
             try {
