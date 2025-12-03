@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -212,7 +213,7 @@ public class PanelReservas extends javax.swing.JPanel {
             }
 
             // Tomar el primer vuelo disponible
-            Vuelo vuelo = vuelosDisponibles.get(0);
+            Vuelo vuelo = vuelosDisponibles.getFirst();
 
             // Obtener tarifas del vuelo
             List<Tarifa> tarifas = tarifaService.listarTarifasPorVuelo(vuelo.getIdVuelo());
@@ -233,8 +234,8 @@ public class PanelReservas extends javax.swing.JPanel {
             // Crear detalle de reserva
             DetalleReserva detalle = new DetalleReserva();
             detalle.setIdVuelo(vuelo.getIdVuelo());
-            detalle.setNumeroAsiento("A" + (int) (Math.random() * 30 + 1));
-            detalle.setIdTarifa(tarifas.get(0).getIdTarifa());
+            detalle.setNumeroAsiento("A" + (int) (ThreadLocalRandom.current().nextDouble() * 30 + 1));
+            detalle.setIdTarifa(tarifas.getFirst().getIdTarifa());
 
             List<DetalleReserva> detalles = new ArrayList<>();
             detalles.add(detalle);
