@@ -213,7 +213,7 @@ public class VentanaLogin extends javax.swing.JFrame {
             // Verificar el rol del usuario y navegar a la ventana correspondiente
             String rol = usuarioService.getUsuarioAutenticado().getRol();
 
-            if ("Administrador".equalsIgnoreCase(rol)) {
+            if ("admin".equalsIgnoreCase(rol)) {
                 // Si es admin, abrir VentanaAdmin
                 VentanaAdmin ventanaAdmin = new VentanaAdmin();
                 ventanaAdmin.setVisible(true);

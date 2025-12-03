@@ -479,8 +479,7 @@ public class PanelGestionVuelos extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jTextField1, gridBagConstraints);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aeroméxico", "Magnicharters",
-                "Aeromar", "Interjet", "Volaris", "Viva Aerobus", "Wingo", "Spirit" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         jComboBox1.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -515,11 +514,7 @@ public class PanelGestionVuelos extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jDateChooser1, gridBagConstraints);
 
-        cmbOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CUN - Cancún",
-                "YYZ - Toronto Pearson", "GIG -  Galeão", "SCL - Arturo Merino Benítez",
-                "MAD - Adolfo Suárez Madrid-Barajas", "CDG - París-Charles de Gaulle", "BER - Berlín Brandeburgo",
-                "FCO - Roma-Fiumicino", "NRT - Narita", "PEK - Pekín Capital", "SYD - Sídney", "CPT - Ciudad del Cabo",
-                "DEL - Indira Gandhi", "CAI - El Cairo", "DXB - Dubái" }));
+        cmbOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         cmbOrigen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbOrigenActionPerformed(evt);
@@ -534,11 +529,7 @@ public class PanelGestionVuelos extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(cmbOrigen, gridBagConstraints);
 
-        cmbOrigen1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CUN - Cancún",
-                "YYZ - Toronto Pearson", "GIG -  Galeão", "SCL - Arturo Merino Benítez",
-                "MAD - Adolfo Suárez Madrid-Barajas", "CDG - París-Charles de Gaulle", "BER - Berlín Brandeburgo",
-                "FCO - Roma-Fiumicino", "NRT - Narita", "PEK - Pekín Capital", "SYD - Sídney", "CPT - Ciudad del Cabo",
-                "DEL - Indira Gandhi", "CAI - El Cairo", "DXB - Dubái" }));
+        cmbOrigen1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         cmbOrigen1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbOrigen1ActionPerformed(evt);

@@ -319,8 +319,7 @@ public class PanelGestionReservas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jTextField1, gridBagConstraints);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aeroméxico", "Magnicharters",
-                "Aeromar", "Interjet", "Volaris", "Viva Aerobus", "Wingo", "Spirit" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         jComboBox1.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -355,8 +354,7 @@ public class PanelGestionReservas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jTextField3, gridBagConstraints);
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aeroméxico", "Magnicharters",
-                "Aeromar", "Interjet", "Volaris", "Viva Aerobus", "Wingo", "Spirit" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         jComboBox2.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
