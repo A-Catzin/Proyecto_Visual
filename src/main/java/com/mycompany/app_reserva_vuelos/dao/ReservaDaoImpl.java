@@ -237,4 +237,32 @@ public class ReservaDaoImpl implements ReservaDao {
 
         return reservas;
     }
+
+    @Override
+    public List<Reserva> listarTodasReservas() {
+        String sql = "SELECT ID_Reserva, Codigo_Reserva, ID_Pasajero, Fecha_Reserva, Estado_Reserva " +
+                "FROM reservas ORDER BY Fecha_Reserva DESC";
+
+        List<Reserva> reservas = new ArrayList<>();
+
+        try (Connection conn = ConexionBD.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (conn == null) {
+                System.err.println("No se pudo obtener conexión para listar todas las reservas.");
+                return reservas;
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reservas.add(mapearResultSetAReserva(rs));
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return reservas;
+    }
 }

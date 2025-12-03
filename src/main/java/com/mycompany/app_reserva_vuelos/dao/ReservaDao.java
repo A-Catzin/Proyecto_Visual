@@ -18,8 +18,8 @@ public interface ReservaDao {
      * Inserta una nueva reserva y sus detalles en la base de datos.
      * Debe hacerse en una transacción.
      *
-     * @param reserva         objeto Reserva (sin idReserva aún)
-     * @param detalles        lista de detalles asociados al vuelo/tarifa/asiento
+     * @param reserva  objeto Reserva (sin idReserva aún)
+     * @param detalles lista de detalles asociados al vuelo/tarifa/asiento
      * @return el id generado para la reserva o -1 si falla
      */
     int crearReserva(Reserva reserva, List<DetalleReserva> detalles);
@@ -38,9 +38,14 @@ public interface ReservaDao {
      * Cambia el estado de la reserva (por ejemplo, 'Activa' -> 'Cancelada').
      */
     boolean actualizarEstadoReserva(int idReserva, String nuevoEstado);
-    
+
     /**
      * Lista todas las reservas de un pasajero específico.
      */
     List<Reserva> listarReservasPorPasajero(int idPasajero);
+
+    /**
+     * Lista todas las reservas en el sistema.
+     */
+    List<Reserva> listarTodasReservas();
 }

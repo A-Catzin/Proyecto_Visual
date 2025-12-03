@@ -146,4 +146,14 @@ public class ReservaServiceImpl implements ReservaService { // Implementa la int
             throw new RuntimeException("Error al listar reservas del pasajero", e);
         }
     }
+
+    @Override
+    public List<Reserva> listarTodasReservas() {
+        try {
+            return reservaDao.listarTodasReservas();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al listar todas las reservas", e);
+        }
+    }
 }

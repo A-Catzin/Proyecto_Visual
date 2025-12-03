@@ -26,7 +26,7 @@ public class PanelGestionReservas extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
 
     /**
-     * Creates new form PanelGestiondeReservas
+     * Creates new form PanelGestionReservas
      */
     public PanelGestionReservas() {
         initComponents();
@@ -34,12 +34,11 @@ public class PanelGestionReservas extends javax.swing.JPanel {
         vueloService = new VueloServiceImpl();
         pasajeroService = new PasajeroServiceImpl();
         inicializarTabla();
-        cargarEstados();
-        configurarEventos();
+        cargarTodasLasReservas();
     }
 
     private void inicializarTabla() {
-        String[] columnNames = { "Código", "Pasajero", "Email", "Vuelo(s)", "Estado", "Fecha Reserva" };
+        String[] columnNames = { "ID", "Código", "Pasajero", "Email", "Vuelo(s)", "Estado", "Fecha Reserva" };
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -47,178 +46,181 @@ public class PanelGestionReservas extends javax.swing.JPanel {
             }
         };
         jTable1.setModel(tableModel);
+        // Ocultar la columna ID pero mantenerla para referencia
+        jTable1.getColumnModel().getColumn(0).setMinWidth(0);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
+        jTable1.getColumnModel().getColumn(0).setWidth(0);
     }
 
-    private void cargarEstados() {
-        jComboBox2.removeAllItems();
-        jComboBox2.addItem("Confirmada");
-        jComboBox2.addItem("Pendiente");
-        jComboBox2.addItem("Cancelada");
-    }
+    private void cargarTodasLasReservas() {
+        try {
+            tableModel.setRowCount(0);
+            List<Reserva> reservas = reservaService.listarTodasReservas();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private void configurarEventos() {
-        jButton1.addActionListener(evt -> buscarReserva());
-        jButton2.addActionListener(evt -> mostrarMensajeNuevaReserva());
-        jButton3.addActionListener(evt -> modificarEstadoReserva());
-        jButton4.addActionListener(evt -> cancelarReserva());
-        jButton5.addActionListener(evt -> limpiarCampos());
+            for (Reserva reserva : reservas) {
+                Pasajero pasajero = pasajeroService.obtenerPasajeroPorId(reserva.getIdPasajero());
+                String nombrePasajero = pasajero != null ? pasajero.getNombre() + " " + pasajero.getApellido() : "N/A";
+                String emailPasajero = pasajero != null ? pasajero.getEmail() : "N/A";
 
-        jTable1.getSelectionModel().addListSelectionListener(event -> {
-            if (!event.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
-                cargarDatosSeleccionados();
+                // Obtener detalles de la reserva
+                List<DetalleReserva> detalles = reservaService.obtenerDetallesPorReserva(reserva.getIdReserva());
+                String vuelosInfo = detalles.size() + " vuelo(s)";
+
+                String fechaReserva = reserva.getFechaReserva() != null
+                        ? reserva.getFechaReserva().format(dateFormatter)
+                        : "";
+
+                Object[] row = {
+                        reserva.getIdReserva(), // ID oculto
+                        reserva.getCodigoReserva(),
+                        nombrePasajero,
+                        emailPasajero,
+                        vuelosInfo,
+                        reserva.getEstadoReserva(),
+                        fechaReserva
+                };
+                tableModel.addRow(row);
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar reservas: " + e.getMessage());
+        }
     }
 
-    private void buscarReserva() {
-        String codigoReserva = jTextField1.getText().trim();
-        if (codigoReserva.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese un código de reserva para buscar.");
+    private void verDetallesReserva() {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una reserva para ver los detalles.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            int idReserva = Integer.parseInt(codigoReserva);
+            int idReserva = (int) tableModel.getValueAt(selectedRow, 0);
             Reserva reserva = reservaService.obtenerReservaPorId(idReserva);
+            List<DetalleReserva> detalles = reservaService.obtenerDetallesPorReserva(idReserva);
+            Pasajero pasajero = pasajeroService.obtenerPasajeroPorId(reserva.getIdPasajero());
 
-            if (reserva == null) {
-                JOptionPane.showMessageDialog(this, "No se encontró la reserva con código: " + codigoReserva);
-                return;
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("=== DETALLES DE LA RESERVA ===\n\n");
+            mensaje.append("Código: ").append(reserva.getCodigoReserva()).append("\n");
+            mensaje.append("Estado: ").append(reserva.getEstadoReserva()).append("\n");
+            mensaje.append("Fecha: ")
+                    .append(reserva.getFechaReserva().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                    .append("\n\n");
+
+            mensaje.append("=== PASAJERO ===\n");
+            if (pasajero != null) {
+                mensaje.append("Nombre: ").append(pasajero.getNombre()).append(" ").append(pasajero.getApellido())
+                        .append("\n");
+                mensaje.append("Email: ").append(pasajero.getEmail()).append("\n");
+                // Teléfono no disponible en modelo Pasajero
             }
 
-            // Limpiar tabla y mostrar solo esta reserva
-            tableModel.setRowCount(0);
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-            Pasajero pasajero = pasajeroService.obtenerPasajeroPorId(reserva.getIdPasajero());
-            String nombrePasajero = pasajero != null ? pasajero.getNombre() + " " + pasajero.getApellido() : "N/A";
-            String emailPasajero = pasajero != null ? pasajero.getEmail() : "N/A";
-
-            // Obtener detalles de la reserva
-            List<DetalleReserva> detalles = reservaService.obtenerDetallesPorReserva(idReserva);
-            String vuelosInfo = detalles.size() + " vuelo(s)";
-
-            String fechaReserva = reserva.getFechaReserva() != null ? reserva.getFechaReserva().format(dateFormatter)
-                    : "";
-
-            Object[] row = {
-                    reserva.getCodigoReserva(),
-                    nombrePasajero,
-                    emailPasajero,
-                    vuelosInfo,
-                    reserva.getEstadoReserva(),
-                    fechaReserva
-            };
-            tableModel.addRow(row);
-
-            // Mostrar detalles en los campos
-            jTextField2.setText(nombrePasajero);
-            jTextField3.setText(emailPasajero);
-            jComboBox2.setSelectedItem(reserva.getEstadoReserva());
-
-            // Mostrar información de vuelos en el combo
-            jComboBox1.removeAllItems();
+            mensaje.append("=== VUELOS ===\n");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             for (DetalleReserva detalle : detalles) {
                 Vuelo vuelo = vueloService.obtenerVueloPorId(detalle.getIdVuelo());
                 if (vuelo != null) {
-                    jComboBox1.addItem(vuelo.getNumeroVuelo() + " - Asiento: " + detalle.getNumeroAsiento());
+                    mensaje.append("• Vuelo: ").append(vuelo.getNumeroVuelo()).append("\n");
+                    mensaje.append("  Salida: ").append(vuelo.getFechaHoraSalida().format(timeFormatter)).append("\n");
+                    mensaje.append("  Llegada: ").append(vuelo.getFechaHoraLlegada().format(timeFormatter))
+                            .append("\n");
+                    mensaje.append("  Asiento: ").append(detalle.getNumeroAsiento()).append("\n\n");
                 }
             }
-            jTextField5.setText(String.valueOf(detalles.size()));
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El código de reserva debe ser un número.");
+            JOptionPane.showMessageDialog(this, mensaje.toString(), "Detalles de Reserva",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al buscar reserva: " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-
-    private void mostrarMensajeNuevaReserva() {
-        JOptionPane.showMessageDialog(this,
-                "Para crear una nueva reserva, use el panel de búsqueda de vuelos en la interfaz de cliente.",
-                "Información",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void modificarEstadoReserva() {
-        int selectedRow = jTable1.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione una reserva para modificar su estado.");
-            return;
-        }
-
-        try {
-            String codigoReserva = jTextField1.getText().trim();
-            if (codigoReserva.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No hay reserva seleccionada.");
-                return;
-            }
-
-            int idReserva = Integer.parseInt(codigoReserva);
-            String nuevoEstado = (String) jComboBox2.getSelectedItem();
-
-            if (nuevoEstado == null) {
-                JOptionPane.showMessageDialog(this, "Seleccione un estado.");
-                return;
-            }
-
-            boolean resultado = reservaService.cancelarReserva(idReserva, nuevoEstado);
-            if (resultado) {
-                buscarReserva(); // Recargar la reserva
-                JOptionPane.showMessageDialog(this, "Estado de reserva actualizado exitosamente.");
-            } else {
-                JOptionPane.showMessageDialog(this, "No se pudo actualizar el estado de la reserva.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al modificar estado: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al obtener detalles: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void cancelarReserva() {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione una reserva para cancelar.");
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una reserva para cancelar.", "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String estadoActual = (String) tableModel.getValueAt(selectedRow, 5);
+        if ("Cancelada".equals(estadoActual)) {
+            JOptionPane.showMessageDialog(this, "Esta reserva ya está cancelada.", "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "¿Está seguro de cancelar esta reserva?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+                "¿Está seguro de que desea cancelar esta reserva?",
+                "Confirmar Cancelación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                String codigoReserva = jTextField1.getText().trim();
-                if (!codigoReserva.isEmpty()) {
-                    int idReserva = Integer.parseInt(codigoReserva);
-                    boolean resultado = reservaService.cancelarReserva(idReserva, "Cancelada");
-                    if (resultado) {
-                        limpiarCampos();
-                        JOptionPane.showMessageDialog(this, "Reserva cancelada exitosamente.");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "No se pudo cancelar la reserva.");
-                    }
+                int idReserva = (int) tableModel.getValueAt(selectedRow, 0);
+                boolean resultado = reservaService.cancelarReserva(idReserva, "Cancelada");
+
+                if (resultado) {
+                    JOptionPane.showMessageDialog(this, "Reserva cancelada exitosamente.", "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    cargarTodasLasReservas(); // Recargar tabla
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo cancelar la reserva.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error al cancelar reserva: " + e.getMessage());
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al cancelar reserva: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void cargarDatosSeleccionados() {
-        // Los datos ya se cargan en buscarReserva()
-    }
+    private void cambiarEstadoReserva() {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una reserva para cambiar su estado.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    private void limpiarCampos() {
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jTextField5.setText("");
-        jComboBox1.removeAllItems();
-        jComboBox2.setSelectedIndex(0);
-        jTable1.clearSelection();
-        tableModel.setRowCount(0);
+        String[] estados = { "Confirmada", "Pendiente", "Cancelada" };
+        String estadoActual = (String) tableModel.getValueAt(selectedRow, 5);
+
+        String nuevoEstado = (String) JOptionPane.showInputDialog(this,
+                "Estado actual: " + estadoActual + "\nSeleccione el nuevo estado:",
+                "Cambiar Estado",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                estados,
+                estadoActual);
+
+        if (nuevoEstado != null && !nuevoEstado.equals(estadoActual)) {
+            try {
+                int idReserva = (int) tableModel.getValueAt(selectedRow, 0);
+                boolean resultado = reservaService.cancelarReserva(idReserva, nuevoEstado); // Usamos cancelarReserva
+                                                                                            // que actualiza estado
+
+                if (resultado) {
+                    JOptionPane.showMessageDialog(this, "Estado actualizado exitosamente.", "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    cargarTodasLasReservas(); // Recargar tabla
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo actualizar el estado.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al actualizar estado: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
@@ -230,275 +232,181 @@ public class PanelGestionReservas extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        btnVerDetalles = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnCambiarEstado = new javax.swing.JButton();
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de la reserva."));
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-
-        jLabel1.setText("Código de Reserva:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel1, gridBagConstraints);
-
-        jLabel2.setText("Estado:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel2, gridBagConstraints);
-
-        jLabel3.setText("Nombre de Cliente:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel3, gridBagConstraints);
-
-        jLabel4.setText("Email:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel4, gridBagConstraints);
-
-        jLabel5.setText("Vuelo:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel5, gridBagConstraints);
-
-        jLabel6.setText("Asientos:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel6, gridBagConstraints);
-
-        jTextField1.setToolTipText("");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jTextField1, gridBagConstraints);
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
-        jComboBox1.setToolTipText("");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jComboBox1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jTextField5, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jTextField2, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jTextField3, gridBagConstraints);
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
-        jComboBox2.setToolTipText("");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jComboBox2, gridBagConstraints);
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lista de Reservas"));
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("Gestiona las reservas disponibles");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
-                        { null, null, null, null, null, null, null, null },
-                        { null, null, null, null, null, null, null, null },
-                        { null, null, null, null, null, null, null, null },
-                        { null, null, null, null, null, null, null, null }
+                        { null, null, null, null, null, null, null },
+                        { null, null, null, null, null, null, null },
+                        { null, null, null, null, null, null, null },
+                        { null, null, null, null, null, null, null }
                 },
                 new String[] {
-                        "Codigo", "Cliente", "EMail", "Vuelo", "Asientos", "Estado", "Fecha Reserva", "Total"
+                        "ID", "Código", "Pasajero", "Email", "Vuelo(s)", "Estado", "Fecha Reserva"
                 }) {
             Class[] types = new Class[] {
-                    java.lang.Integer.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class,
-                    java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
+                    java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class,
+                    java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean[] {
+                    false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
         });
-        jTable1.setToolTipText("");
         jScrollPane1.setViewportView(jTable1);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1)
-                                .addContainerGap()));
-        jPanel3Layout.setVerticalGroup(
-                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
-                                .addContainerGap()));
+        jPanel2.setBackground(new java.awt.Color(240, 240, 240));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Acciones"));
 
-        jPanel4.setBackground(new java.awt.Color(153, 153, 153));
+        btnVerDetalles.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnVerDetalles.setText("Ver Detalles");
+        btnVerDetalles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerDetallesActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Buscar reserva");
-        jPanel4.add(jButton1);
+        btnCancelar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCancelar.setText("Cancelar Reserva");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Nueva reserva");
-        jPanel4.add(jButton2);
+        btnActualizar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Modificar");
-        jPanel4.add(jButton3);
+        btnCambiarEstado.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCambiarEstado.setText("Cambiar Estado");
+        btnCambiarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCambiarEstadoActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Cancelar reserva");
-        jPanel4.add(jButton4);
-
-        jButton5.setText("Limpiar");
-        jPanel4.add(jButton5);
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(btnVerDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 140,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCambiarEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 140,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 160,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+        jPanel2Layout.setVerticalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnVerDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnCambiarEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(15, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(24, 24, 24)
-                                .addGroup(jPanel1Layout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                .addGap(20, 20, 20)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 760,
+                                                Short.MAX_VALUE)
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
-                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(34, Short.MAX_VALUE)));
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(20, 20, 20)));
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 156,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12,
-                                        Short.MAX_VALUE)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(15, 15, 15)));
+                                .addGap(20, 20, 20)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 848, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))));
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 481, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))));
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnVerDetallesActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnVerDetallesActionPerformed
+        verDetallesReserva();
+    }// GEN-LAST:event_btnVerDetallesActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCancelarActionPerformed
+        cancelarReserva();
+    }// GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnActualizarActionPerformed
+        cargarTodasLasReservas();
+        JOptionPane.showMessageDialog(this, "Tabla actualizada.", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }// GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnCambiarEstadoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCambiarEstadoActionPerformed
+        cambiarEstadoReserva();
+    }// GEN-LAST:event_btnCambiarEstadoActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnCambiarEstado;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnVerDetalles;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 }
