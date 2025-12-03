@@ -21,26 +21,29 @@ public class AerolineaServiceImpl implements AerolineaService {
         this.aerolineaDao = new AerolineaDaoImpl();
     }
 
+    /** Registra una nueva aerolinea en el sistema */
     @Override
     public int registrarAerolinea(Aerolinea aerolinea) {
         return aerolineaDao.registrar(aerolinea);
     }
 
+    /** Modifica los datos de una aerolinea existente */
     @Override
     public void modificarAerolinea(Aerolinea aerolinea) {
         aerolineaDao.modificar(aerolinea);
     }
 
+    /** Elimina una aerolinea por su identificador */
     @Override
     public void eliminarAerolinea(int idAerolinea) {
         aerolineaDao.eliminar(idAerolinea);
     }
-
+    /** Obtiene la lista completa de aerolineas */
     @Override
     public List<Aerolinea> listarAerolineas() {
         return aerolineaDao.listar();
     }
-
+    /** Obtiene una aerolinea específica por su identificador */
     @Override
     public Aerolinea obtenerAerolineaPorId(int idAerolinea) {
         return aerolineaDao.obtenerPorId(idAerolinea);

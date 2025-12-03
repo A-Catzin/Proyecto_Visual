@@ -10,7 +10,7 @@ import com.mycompany.app_reserva_vuelos.model.Usuario;
 import java.util.List;
 
 /**
- *
+ * Implementación Service para operaciones de negocio de Usuario
  * @author tehca
  */
 public class UsuarioServiceImpl implements UsuarioService {
@@ -18,10 +18,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioDao usuarioDao;
     private Usuario usuarioAutenticado;
 
+    /** Constructor privado para Singleton */
     private UsuarioServiceImpl() {
         this.usuarioDao = new UsuarioDaoImpl();
     }
 
+    /** Retorna la instancia única del servicio (patrón Singleton) */
     public static UsuarioServiceImpl getInstance() {
         if (instance == null) {
             instance = new UsuarioServiceImpl();
@@ -29,10 +31,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         return instance;
     }
 
+    /** Constructor para inyección de dependencias (testing) */
     public UsuarioServiceImpl(UsuarioDao usuarioDao) {
         this.usuarioDao = usuarioDao;
     }
 
+    /** Autentica un usuario validando sus credenciales */
     @Override
     public boolean autenticar(String nombreUsuario, String contraseña) {
         if (nombreUsuario == null || nombreUsuario.trim().isEmpty()
@@ -55,22 +59,22 @@ public class UsuarioServiceImpl implements UsuarioService {
             return false;
         }
     }
-
+    /** Retorna el usuario autenticado actualmente */
     @Override
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;
     }
-
+    /** Verifica si hay un usuario autenticado en la sesión actual */
     @Override
     public boolean hayUsuarioAutenticado() {
         return usuarioAutenticado != null;
     }
-
+    /** Cierra la sesión del usuario autenticado */
     @Override
     public void cerrarSesion() {
         this.usuarioAutenticado = null;
     }
-
+    /** Obtiene un usuario específico por su nombre de usuario */
     @Override
     public Usuario obtenerPorNombreUsuario(String nombreUsuario) {
         try {
@@ -80,7 +84,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new RuntimeException("Error al obtener usuario por nombre de usuario", e);
         }
     }
-
+    /** Registra un nuevo usuario validando que no exista otro con el mismo nombre */
     @Override
     public int registrarUsuario(Usuario usuario) {
         // Validar si el usuario ya existe
@@ -89,17 +93,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         return usuarioDao.registrar(usuario);
     }
-
+    /** Modifica los datos de un usuario existente */
     @Override
     public void modificarUsuario(Usuario usuario) {
         usuarioDao.modificar(usuario);
     }
-
+    
+    /** Elimina un usuario por su identificador */
     @Override
     public void eliminarUsuario(int idUsuario) {
         usuarioDao.eliminar(idUsuario);
     }
-
+    /** Obtiene la lista completa de usuarios del sistema */
     @Override
     public List<Usuario> listarUsuarios() {
         return usuarioDao.listar();

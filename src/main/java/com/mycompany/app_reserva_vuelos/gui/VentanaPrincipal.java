@@ -27,7 +27,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         configurarCardLayout();
         configurarEventosMenu();
         
-        setSize(1366, 768);  // Ajusta según necesites
+        setSize(1366, 768);  // Ajustar segun el tamaño
         setLocationRelativeTo(null);  // Centra la ventana
         setResizable(true);
     }
